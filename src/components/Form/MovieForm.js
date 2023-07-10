@@ -9,7 +9,6 @@ import MovieServices from "../../Services/MovieServices";
 const MovieForm = (props) => {
   let { id } = useParams();
   const navigate = useNavigate();
-  console.log(id);
   const [movieData, setMovieData] = useState({
     id: id,
     title: "",

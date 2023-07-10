@@ -1,8 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import AuthServices from '../../Services/AuthServices';
 
-const Navbar = () => {
-  let isRole="ADMIN"
+const Navbar = (props) => {
+
+  let [isCollapsed, setIsCollapsed] = useState(true);
+ 
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRole, setIsRole] = useState(null)
+  useEffect(() => {
+    if (props.creds != null && props.isLoggedIn) {
+      
+      setIsRole(props.creds.user.authorities[0].authority);
+      setIsLoading(false);
+      
+   
+    }
+  }, [props.creds, props.isLoggedIn]);
+  
+  
+  const handleToggle = () => {
+    setIsCollapsed(!isCollapsed);
+  }
+  console.log(props.isLoggedIn)
   const navigate = useNavigate();
   const [search,setSearch] = useState({searchValue:""});
 
@@ -32,6 +52,7 @@ const Navbar = () => {
           />
         </a>
         <button
+          onClick={handleToggle}
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -42,7 +63,8 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+        <div className={`${isCollapsed ? 'collapse' : ''} navbar-collapse`} id="navbarSupportedContent">
+
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link to="/" className="nav-link active" style={{ color: '#FFA500' }} aria-current="page">
@@ -55,17 +77,25 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/login" className="nav-link active" style={{ color: '#FFA500' }} aria-current="page">
+              <Link to={`${props.isLoggedIn ? '/' : '/login'}`} className="nav-link active" style={{ color: '#FFA500' }} aria-current="page">
                 Profile
               </Link>
             </li>
-            {isRole==="ADMIN"?
+           
+           { props.isLoggedIn && <li className="nav-item">
+              <Link onClick={()=>props.logout()} className="nav-link active" style={{ color: '#FFA500' }} aria-current="page">
+                logout
+              </Link>
+            </li>}
+            {isRole==="ROLE_ADMIN"?
             <li className="nav-item">
               <Link to="/addmovie/_add" className="nav-link active" style={{ color: '#FFA500' }} aria-current="page">
                 Add movies
               </Link>
             </li>:""}
+           
           </ul>
+        
           <form className="d-flex">
             <input
               className="form-control me-2"

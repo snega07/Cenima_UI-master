@@ -1,12 +1,22 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Trending.css';
 
 import ViewReviewModal from '../moviemodal';
 
-const Trending = () => {
+const Trending = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedId, setSelectedId] = useState();
-  let isRole = "ADMIN";
+ 
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRole, setIsRole] = useState(null)
+  useEffect(() => {
+    if (props.creds != null && props.isLoggedIn) {
+     
+      setIsRole(props.creds.user.authorities[0].authority);
+      setIsLoading(false);
+    }
+  }, [props.creds, props.isLoggedIn]);
+ 
   const handleDelete = (id) => {
     alert(id);
   }
@@ -94,7 +104,7 @@ const Trending = () => {
               <div className="card tcards" id={rmovie.movieId} >
 
 
-                {isRole == "ADMIN" ? <div className="card-delete">
+                {isRole == "ROLE_ADMIN" ? <div className="card-delete">
                   <i
                     onClick={() => handleDelete(index)}
                   ><img src={'delete.png'} height={25} width={25} /></i>
@@ -119,7 +129,7 @@ const Trending = () => {
               </div>
             </div>
           ))}
-          {isRole == "ADMIN" ? <div className='col-md-3 addTrendCon' >
+          {isRole == "ROLE_ADMIN" ? <div className='col-md-3 addTrendCon' >
             <div className="card addTrend" >
               <img
                 src={'add\(1\).png'}

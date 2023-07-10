@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReviewService from "../../Services/ReviewService";
 import './MovieDetail.css';
 import { FaStar } from 'react-icons/fa';
-const Review = ({ movieId,isRole }) => {
+const Review = ({ movieId,isRole,isLoggedIn }) => {
    
     const movId = movieId;
     const [reviewRes, setReviewRes] = useState([]);
@@ -51,7 +51,7 @@ const Review = ({ movieId,isRole }) => {
         console.log("review : "+review);
         
         const newReview = {
-        userId:"2febf2c1-87a9-4d2e-b17a-8a73506ff09b",
+        userId:"6cc8f96e-0436-4f6c-b164-e0d405a97692",
           rating: rating,
           reviewText: review, 
         }; 
@@ -67,7 +67,7 @@ const Review = ({ movieId,isRole }) => {
 
     return (
         <div style={{ textAlign: "left", marginBottom: "30px" }}>
-             <div   style={{padding: "30px",  border : "2px solid black" , borderRadius:"2rem"}}>
+           { isLoggedIn && <div   style={{padding: "30px",  border : "2px solid black" , borderRadius:"2rem"}}>
             <h6><strong>Rating</strong></h6>
             <div className='m-2'>
                 {list.map((ele, i) => {
@@ -117,14 +117,14 @@ const Review = ({ movieId,isRole }) => {
 
 
                 
-        </div>
+        </div>}
 
             {reviewRes.length > 0 ? reviewRes.map((rev, index) => (
                 <div className="reviewbox" key={index}>
                     <div className="row">
                         <div className="col"><span>{rev.username}</span></div>
                         <div className="col" style={{ color: "#ffffff", }}>Rating:{rev.rating}</div>
-                       { isRole==="ADMIN"?<div className="col"
+                       { isRole==="ROLE_ADMIN"?<div className="col"
                         ><button variant="primary"
                             className="btn"
                             type="Submit"
@@ -139,7 +139,7 @@ const Review = ({ movieId,isRole }) => {
                     </div>
                     <div className="row">
                         <div className="col"><span>Source: </span> {rev.source}</div>
-                        <div className="col"><span>Source: </span> {rev.reviewDate}</div>
+                        <div className="col"><span>Date: </span> {rev.reviewDate}</div>
                     </div>
                 </div>
             )) : <p>no reviews yet</p>}

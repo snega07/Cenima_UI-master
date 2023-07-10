@@ -8,11 +8,14 @@ import { useNavigate } from "react-router-dom";
 const Recommended = (props) => {
   const [rmovie, setRmovie] = useState([]);
   const navigate = useNavigate();
-
-  let isRole = "ADMIN";
-  const handleDelete = (id) => {
-    alert(id);
-  };
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRole, setIsRole] = useState(null)
+  useEffect(() => {
+    if (props.creds != null && props.isLoggedIn) {
+      setIsRole(props.creds.user.authorities[0].authority);
+      setIsLoading(false);
+    }
+  }, [props.creds, props.isLoggedIn]);
 
   const fetchMovies = async () => {
     MovieServices.getRecommendation()
@@ -28,6 +31,10 @@ const Recommended = (props) => {
   useEffect(() => {
     fetchMovies();
   }, []);
+ 
+  const handleDelete = (id) => {
+    alert(id);
+  };
 
   const containerRef = useRef(null);
   const scrollLeft = () => {
@@ -42,6 +49,10 @@ const Recommended = (props) => {
       behavior: "smooth",
     });
   };
+
+  const openModel =()=>{
+    
+  }
 
   /*const rmovie = [
     {
@@ -75,7 +86,7 @@ const Recommended = (props) => {
   ];*/
 
   const openMovie = (movieId) => {
-    navigate(`/view-movie/${movieId}`);
+    navigate(`/view-movie/${movieId}`, { state: { isRole: isRole,isLoggedIn: props.isLoggedIn}});
   };
 
   return (
@@ -101,7 +112,7 @@ const Recommended = (props) => {
             {rmovie.map((rmovie, index) => (
               <div className="col-md-3" key={index}>
                 <div className="card rcards" id={rmovie.movieId}>
-                  {isRole == "ADMIN" ? (
+                  {isRole == "ROLE_ADMIN" ? (
                     <div className="card-delete">
                       <i onClick={() => handleDelete(index)}>
                         <img src={"delete.png"} height={25} width={25} />
@@ -149,6 +160,7 @@ const Recommended = (props) => {
                     </div>
                     <a
                       className="btn btn-primary"
+                      onClick={()=>openModel()}
                       style={{
                         backgroundColor: "#FFA500",
                         borderColor: "#FFA500",
@@ -161,7 +173,7 @@ const Recommended = (props) => {
                 </div>
               </div>
             ))}
-            {isRole == "ADMIN" ? (
+            {isRole == "ROLE_ADMIN" ? (
               <div className="col-md-3 addRecommCon">
                 <div className="card addRecomm">
                   <img

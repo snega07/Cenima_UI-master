@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import './MovieDetail.css';
 import { FaPlus, FaMinus, FaStar } from 'react-icons/fa';
 import { GiCancel } from 'react-icons/gi';
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import MovieServices from "../../Services/MovieServices";
 import CastServices from "../../Services/CastServices";
 import Review from "./Review";
 
 const MovieDetailPage = (props) => {
-    let isRole = "ADMIN";
+
     let { id } = useParams();
     const [selected, setSelected] = useState(null);
     const [istrending,setIsTrending]= useState(false);
@@ -29,7 +29,8 @@ const MovieDetailPage = (props) => {
     });
 
     const navigate = useNavigate();
-
+const location = useLocation();
+  const { isRole, isLoggedIn } = location.state;
     const fetchMovies = async () => {
         MovieServices.getMovieById(id).then(
             res => changeMovieData(res.data)
@@ -176,7 +177,7 @@ const MovieDetailPage = (props) => {
                     </div>
                     {moviedata.genres.map((genre, index) => (
 
-                        <div key={index} className="col-sm-2">{genre.category + " "}{isRole === "ADMIN" ? <span onClick={() => removeGenre(genre.genreId, moviedata.movieId)}><GiCancel /></span> : ""}</div>
+                        <div key={index} className="col-sm-2">{genre.category + " "}{isRole === "ROLE_ADMIN" ? <span onClick={() => removeGenre(genre.genreId, moviedata.movieId)}><GiCancel /></span> : ""}</div>
 
 
                     ))}
@@ -222,7 +223,7 @@ const MovieDetailPage = (props) => {
                                                     {item.roleName}
                                                 </span>
                                             </div>
-                                            {isRole === "ADMIN" ? <div className="col">
+                                            {isRole === "ROLE_ADMIN" ? <div className="col">
                                                 <button
                                                     className="btn"
                                                     variant="primary"
@@ -246,7 +247,7 @@ const MovieDetailPage = (props) => {
                     </div>
                 </div>
             </div>
-            {isRole === "ADMIN" ? <div className=" row row-padding" >
+            {isRole === "ROLE_ADMIN" ? <div className=" row row-padding" >
                 <div className="col-sm-2">
                     <button
                         className="btn"
@@ -284,7 +285,7 @@ const MovieDetailPage = (props) => {
            
             <div style={{ textAlign: "left" }}>
                 <span style={{ margin: "20px", fontSize: "30px" }} >REVIEWS:</span>
-                <Review movieId={moviedata.movieId} isRole={isRole} />
+                <Review movieId={moviedata.movieId} isRole={isRole} isLoggedIn={isLoggedIn} />
             </div>
 
         </div>

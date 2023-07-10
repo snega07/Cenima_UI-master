@@ -43,7 +43,7 @@ const SearchResult = () => {
 
     }, [search])
     const openMovie = (movieId) => {
-        navigate(`/view-movie/${movieId}`);
+       // call movie detail page here
     };
 
     return (

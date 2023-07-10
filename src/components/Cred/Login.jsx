@@ -1,13 +1,20 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import jwtDecode from 'jwt-decode';
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import './Login.css';
-import Home from "../Home/home.jsx";
+import AuthServices from "../../Services/AuthServices";
 
 const Login = () => {
+  let [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    let creds = localStorage.getItem('user_cenima');
+    if (creds != null) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const [inputValue, setInputValue] = useState('');
   const [inputPassValue, setInputPassValue] = useState('');
@@ -48,7 +55,17 @@ const Login = () => {
     };
     console.log(loginData)
     clearInput();
-    fetch("/api/login", {
+    AuthServices.login(loginData.username,loginData.password).then(
+      ()=>{
+        setIsError(false)
+        navigate("/")
+      },
+      (error)=>{
+        setIsError(true)
+        console.log("error")
+      }
+    )
+    /*fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -68,30 +85,22 @@ const Login = () => {
       .then(response => streamReader(response.body))
       .then(data => {
         localStorage.setItem("user_cenima", data)
-
         console.log(localStorage.getItem("user_cenima"))
-        const token = localStorage.getItem("user_cenima");
-        try {
-          const decodedToken = jwtDecode(token);
-          console.log(decodedToken);
-        } catch (error) {
-          console.log('Invalid token');
-        }
-
       })
       .catch(error => {
         console.error("Login error:", error);
       });
-
+*/
   }
 
-  if (setIsValid == true) {
-    return <Home />;
+  if (isValid || isLoggedIn) {
+    return <Navigate replace to="/" />;
   }
 
 
   return (
     <>
+
       <div className="p-4 box">
         <div className="row align-items-center">
           <div className="col-md-6 logoc">
@@ -130,9 +139,9 @@ const Login = () => {
                   </Button>
                 </div>
               </Form>
-              {isError == true ? <div className="statusHandle"> <Alert variant="warning">
+              {isError ? <div className="statusHandle"> <Alert variant="warning">
                 Invalid Password or Username
-              </Alert></div> : isValid == true ? <div className="statusHandle"> <Alert variant="success">
+              </Alert></div> : isValid ? <div className="statusHandle"> <Alert variant="success">
                 Login successful
               </Alert></div> : <></>}
               <hr />
