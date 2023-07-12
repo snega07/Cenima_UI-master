@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let creds = localStorage.getItem('user_cenima');
+    let creds = localStorage.getItem('user');
     if (creds != null) {
       setIsLoggedIn(true);
     }
