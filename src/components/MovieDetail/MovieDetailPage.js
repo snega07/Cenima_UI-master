@@ -30,7 +30,7 @@ const MovieDetailPage = (props) => {
 
     const navigate = useNavigate();
 const location = useLocation();
-  const { isRole, isLoggedIn } = location.state;
+const { isRole , isLoggedIn } = location.state ;
     const fetchMovies = async () => {
         MovieServices.getMovieById(id).then(
             res => changeMovieData(res.data)
@@ -128,7 +128,7 @@ const location = useLocation();
                             <div className="col-sm-5" >
                                 {moviedata.title}</div>
                             <div className="col-sm-4" ><span><FaStar /></span>
-                                {" " + moviedata.rating}/5
+                                {moviedata.rating!==null? moviedata.rating:"0"}/5
                             </div>
                         </div>
                         <div className="col-sm-3">
@@ -225,14 +225,8 @@ const location = useLocation();
                                             </div>
                                             {isRole === "ROLE_ADMIN" ? <div className="col">
                                                 <button
-                                                    className="btn"
-                                                    variant="primary"
+                                                    className="btn  btn-danger"
                                                     type="Submit"
-                                                    style={{
-                                                        backgroundColor: "#FFA500",
-                                                        borderColor: "#FFA500",
-                                                        color: "black",
-                                                    }}
                                                     onClick={() => deleteCast(item.castId)}
                                                 >
                                                     Delete
@@ -250,14 +244,8 @@ const location = useLocation();
             {isRole === "ROLE_ADMIN" ? <div className=" row row-padding" >
                 <div className="col-sm-2">
                     <button
-                        className="btn"
-                        variant="primary"
+                        className="btn btn-success"
                         type="Submit"
-                        style={{
-                            backgroundColor: "#FFA500",
-                            borderColor: "#FFA500",
-                            color: "black",
-                        }}
                         onClick={() => handleUpdate(moviedata.movieId)}
                     >
                         Update Details
@@ -265,14 +253,8 @@ const location = useLocation();
                 </div>
                 <div className="col-sm-3">
                     <button
-                        className="btn"
-                        variant="primary"
+                        className="btn btn-success"
                         type="Submit"
-                        style={{
-                            backgroundColor: "#FFA500",
-                            borderColor: "#FFA500",
-                            color: "black",
-                        }}
                         onClick={istrending?()=>removeFromTrending(moviedata.movieId):() => addToRecomm(moviedata.movieId)}
                     >
                         {istrending?"remove from trending" :"Add to trending"}
@@ -285,7 +267,9 @@ const location = useLocation();
            
             <div style={{ textAlign: "left" }}>
                 <span style={{ margin: "20px", fontSize: "30px" }} >REVIEWS:</span>
-                <Review movieId={moviedata.movieId} isRole={isRole} isLoggedIn={isLoggedIn} />
+                <Review  movieId={moviedata.movieId}
+  isRole={isRole || ''}
+  isLoggedIn={isLoggedIn || false} />
             </div>
 
         </div>

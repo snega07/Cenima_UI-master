@@ -4,12 +4,18 @@ import { useRef } from "react";
 import { FaStar } from "react-icons/fa";
 import MovieServices from "../../Services/MovieServices";
 import { useNavigate } from "react-router-dom";
+import ViewMovieModal from "../moviemodal";
 
 const Recommended = (props) => {
   const [rmovie, setRmovie] = useState([]);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isRole, setIsRole] = useState(null)
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
+
+ 
   useEffect(() => {
     if (props.creds != null && props.isLoggedIn) {
       setIsRole(props.creds.user.authorities[0].authority);
@@ -18,7 +24,7 @@ const Recommended = (props) => {
   }, [props.creds, props.isLoggedIn]);
 
   const fetchMovies = async () => {
-    MovieServices.getRecommendation()
+    MovieServices.getMovies()
       .then((res) => {
         if (Array.isArray(res.data)) {
           setRmovie(res.data);
@@ -49,10 +55,15 @@ const Recommended = (props) => {
       behavior: "smooth",
     });
   };
+  const handleShowModal = (rmovie) => {
+    setSelectedMovie(rmovie)
+    setShowModal(true);
+  };
 
-  const openModel =()=>{
-    
-  }
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+ 
 
   /*const rmovie = [
     {
@@ -84,7 +95,9 @@ const Recommended = (props) => {
       movieId: 'predatorgoj252-2666jsgag-16166kjag$@-agj'
     },
   ];*/
-
+  const viewAll =()=>{
+    navigate("/viewall", { state: { rmovie: rmovie,isRole: isRole,isLoggedIn: props.isLoggedIn,title:"Recommended movies" } });
+  }
   const openMovie = (movieId) => {
     navigate(`/view-movie/${movieId}`, { state: { isRole: isRole,isLoggedIn: props.isLoggedIn}});
   };
@@ -94,7 +107,7 @@ const Recommended = (props) => {
       <div className="flex-fill">
         <div className="sectionTitle">
           <h3 id="headc">Recommended Movies</h3>
-          <h3 id="viewAll">View All</h3>
+          <h3 id="viewAll" onClick={()=>viewAll()}>View All</h3>
         </div>
         <br />
         <div className="scroll-buttons">
@@ -138,7 +151,7 @@ const Recommended = (props) => {
                     style={{ backgroundColor: "black" }}
                   >
                     <div className="row">
-                      <div className="col">
+                      <div className="col-sm-6">
                         <h5
                           className="card-title"
                           style={{
@@ -151,16 +164,16 @@ const Recommended = (props) => {
                           {rmovie.title}
                         </h5>
                       </div>
-                      <div className="col">
-                        <span>
-                          {rmovie.rating + " "}
-                          <FaStar style={{ marginBottom: "4px" }} />
+                      <div className="col-sm-4">
+                        <span>{rmovie.rating!==null?
+                          rmovie.rating:""}
+                          <FaStar style={{ marginBottom: "4px" }}/>
                         </span>
                       </div>
                     </div>
-                    <a
+                    <button
                       className="btn btn-primary"
-                      onClick={()=>openModel()}
+                      onClick={()=>handleShowModal(rmovie)}
                       style={{
                         backgroundColor: "#FFA500",
                         borderColor: "#FFA500",
@@ -168,7 +181,13 @@ const Recommended = (props) => {
                       }}
                     >
                       Watch Option
-                    </a>
+                    </button>
+                { selectedMovie &&   <ViewMovieModal showModal={showModal} handleCloseModal={handleCloseModal}  movie={{
+            image: selectedMovie.posterUrl,
+            title: selectedMovie.title,
+            description: selectedMovie.movieDesc,
+            rating: selectedMovie.rating,
+          }}/>}
                   </div>
                 </div>
               </div>

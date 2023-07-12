@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import MovieServices from '../Services/MovieServices';
 import CastServices from '../Services/CastServices';
-
+import { MdOutlineSearchOff } from 'react-icons/md'
 const SearchResult = () => {
     let { search } = useParams();
     const navigate = useNavigate();
     const [rmovie, setRmovie] = useState([]);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const isRole = searchParams.get('isRole');
+    const isLoggedIn = searchParams.get('isLoggedIn');
+    console.log(isRole + "from search result page" + isLoggedIn)
     const fetchMovies = async () => {
 
         try {
@@ -43,44 +48,62 @@ const SearchResult = () => {
 
     }, [search])
     const openMovie = (movieId) => {
-       // call movie detail page here
+        navigate(`/view-movie/${movieId}`, {
+            state: {
+                isRole: isRole || '',
+                isLoggedIn: isLoggedIn || false,
+            },
+        });
     };
+
+
+
 
     return (
         <div className="flex-fill">
-            <h3> SearchResult Results</h3>
+            <h3 style={{
+                color: "#999999", font: "arial, sans-serif", fontSize: "2.5rem", padding: "1.8rem", fontWeight: "bold",
+                left: "13px"
+            }}>  Search result for "{search}"</h3>
             <br />
             <div className="container mt-4">
                 <div className="row">
                     {rmovie.length > 0 ? rmovie.map((rmovie, index) => (
-                        <div className="col-md-3" key={index}>
-                            <div className="card">
+                        <div className="col-md-3" key={rmovie.id} style={{ paddingBottom: '25px' }}>
+                            <div className="card" >
                                 <img
                                     src={rmovie.posterUrl}
+                                    onClick={() => openMovie(rmovie.movieId)}
                                     className="card-img-top"
                                     alt={rmovie.title}
-                                    style={{ height: '400px' }}
+                                    style={{ height: '300px' }}
                                 />
                                 <div className="card-body" style={{ backgroundColor: 'black' }}>
-                                    <div className='row'>
-                                        <div className='col'>
-                                            <h5 className="card-title" style={{ color: 'white' }}>{rmovie.title}</h5>
-
-                                        </div>
-                                        <div className="col" style={{ color: "wheat" }}>{rmovie.rating}</div>
-                                    </div>
-                                    <a href="#" onClick={() => openMovie(rmovie.movieId)} className="btn btn-primary" style={{ backgroundColor: '#FFA500', borderColor: '#FFA500', color: 'black' }}>
+                                    <h5 className="card-title" style={{
+                                        color: 'wheat',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                        overflow: 'hidden',
+                                    }}>{rmovie.title}</h5>
+                                    <a className="btn btn-primary" style={{ backgroundColor: '#FFA500', borderColor: '#FFA500', color: 'black' }}>
                                         Watch Option
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    )) : <h3>No Results found</h3>}
+                    )) : <div >
+                        <div className="some-x" style={{ width: "15rem", height: "15rem", background: "#e5e5e9" }} >
+                            <div className="empty ">
+                                <MdOutlineSearchOff className='mt-3 mx-5' size={100} />
+                                <p className='mt-3 mx-3' >Sorry We could't find it</p>
+                            </div>
+                        </div>
+                    </div>}
                 </div>
             </div>
-            <br/>
+            <br />
         </div>
-        
+
 
     );
 }

@@ -9,6 +9,7 @@ import MovieDetailPage from './components/MovieDetail/MovieDetailPage';
 import SearchResult from './searchresult/SearchResult';
 import Navbar from './components/Header/navbar';
 import Footer from './components/Footer/footer';
+import ViewAll from './Viewall/ViewAll';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/addmovie/:id" element={<MovieForm />} />
+      <Route path="/viewall" element={<ViewAll/>} />
       <Route path="/view-movie/:id" element={<MovieDetailPage/>} />
       <Route path="/view-search-result/:search" element={<SearchResult/>} />
     </Routes>

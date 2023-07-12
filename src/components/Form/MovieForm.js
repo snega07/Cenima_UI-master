@@ -147,6 +147,10 @@ if(movieData.id==='_add'){
     MovieServices.createMovie(newMovie).then(res => {
       console.log(res.data)
       navigate('/')
+    }, (error)=>{
+      alert("something went wrong try again ")
+      navigate('/')
+      console.log("error")
     });
    
   }

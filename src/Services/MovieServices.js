@@ -45,6 +45,9 @@ class MovieService {
     removeFromTrending(movieId){
         return axios.delete(TRENDING_API+'/'+movieId)
     }
+    getTrending(){
+        return axios.get(TRENDING_API);
+    }
 }
 
 export default new MovieService();

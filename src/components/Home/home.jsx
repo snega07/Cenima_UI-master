@@ -35,7 +35,7 @@ const Home = () => {
       <br />
       <Trending isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} creds={creds} />
       <br />
-      <Genre />
+      <Genre isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} creds={creds} />
       <br />
       
     </>

@@ -34,7 +34,7 @@ const Navbar = (props) => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate(`/view-search-result/${search.searchValue}`)
+    navigate(`/view-search-result/${search.searchValue}?isRole=${isRole}&isLoggedIn=${props.isLoggedIn}`)
   }
 
   return (
