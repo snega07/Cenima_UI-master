@@ -3,8 +3,7 @@ import './MovieForm.css';
 import { useEffect } from "react";
 import Select from 'react-select';
 import { useNavigate, useParams } from "react-router-dom";
-import GenreServices from "../../Services/GenreServices";
-import MovieServices from "../../Services/MovieServices";
+import MovieServices from "../Services/MovieServices";
 
 const MovieForm = (props) => {
   let { id } = useParams();
@@ -25,23 +24,24 @@ const MovieForm = (props) => {
     releaseDate: "",
   });
 
-  const [genresFromApi, setGenresFromApi] = useState([{}])
+
   const [selectedValue, setSelectedValue] = useState([]);
-  const fetchGenre = async () => {
-    GenreServices.getGenre().then(
-      res => setGenresFromApi(res.data)
-    )
-  }
+  const [castInput, setCastInput] = useState({ castName: "", roleName: "", castUrl: "" });
+  const [editMode, setEditMode] = useState(false);
+  const [editModeIndex, setEditModeIndex] = useState(-1);
+  const [unit,setUnit] = useState("");
+
+
   useEffect(() => {
-    fetchGenre();
-    if(movieData.id ==='_add')
-    {
-        return;
+
+    if (movieData.id === '_add') {
+      return;
     }
-    else{
-    MovieServices.getMovieById(movieData.id).then( (res)=>{
-        let existingMovieData= res.data;
-        setMovieData({ title: existingMovieData.title,
+    else {
+      MovieServices.getMovieById(movieData.id).then((res) => {
+        let existingMovieData = res.data;
+        setMovieData({
+          title: existingMovieData.title,
           director: existingMovieData.director,
           producer: existingMovieData.producer,
           motionPictureRating: existingMovieData.motionPictureRating,
@@ -53,27 +53,44 @@ const MovieForm = (props) => {
           collection: existingMovieData.collection,
           language: existingMovieData.language,
           posterUrl: existingMovieData.posterUrl,
-          releaseDate: existingMovieData.releaseDate})
-    })
-}
+          releaseDate: existingMovieData.releaseDate
+        })
+      })
+    }
   }, [])
 
-  const data = genresFromApi.map(genre => ({
-    value: genre.genreId,
-    label: genre.category
-  }));
+  const data = [
+    { value: "action", label: "Action" },
+    { value: "adventure", label: "Adventure" },
+    { value: "animation", label: "Animation" },
+    { value: "comedy", label: "Comedy" },
+    { value: "crime", label: "Crime" },
+    { value: "drama", label: "Drama" },
+    { value: "fantasy", label: "Fantasy" },
+    { value: "horror", label: "Horror" },
+    { value: "musical", label: "Musical" },
+    { value: "mystery", label: "Mystery" },
+    { value: "romance", label: "Romance" },
+    { value: "science_fiction", label: "Science Fiction" },
+    { value: "thriller", label: "Thriller" },
+    { value: "war", label: "War" },
+    { value: "western", label: "Western" },
+    { value: "historical", label: "Historical" },
+    { value: "biographical", label: "Biographical" },
+    { value: "documentary", label: "Documentary" },
+    { value: "sports", label: "Sports" },
+  ];
+
 
   const handleGenreChange = (selectedOptions) => {
-    const selectedGenres = selectedOptions.map(option => option.value);
+    const selectedGenres = selectedOptions.map(option => ({ category: option.value }));
     setSelectedValue(selectedGenres);
-    console.log(selectedValue);
 
     setMovieData((prevState) => ({
       ...prevState,
-      genreId: selectedGenres
+      genres: selectedGenres
     }));
-
-  }
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMovieData((prevState) => ({
@@ -82,37 +99,61 @@ const MovieForm = (props) => {
     }));
   };
 
-  const handleCastChange = (index, field, value) => {
-    const newCast = [...movieData.casts];
-    newCast[index][field] = value;
-    setMovieData((prevState) => ({
-      ...prevState,
-      casts: newCast,
-    }));
-  };
-  const genreChange = (index, field, value) => {
-    const newGenre = [...movieData.genres];
-    newGenre[index][field] = value;
-    setMovieData((prevState) => ({
-      ...prevState,
-      genres: newGenre,
-    }));
-  };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCastInput((prevState) => ({
+      ...prevState, [name]: value
+    }))
+    console.log(castInput)
 
- 
+  }
+  const handleEditCast = (e, index) => {
+    e.preventDefault();
+    setCastInput(movieData.casts[index]);
+    setEditMode(true);
+    setEditModeIndex(index);
+  };
+  const handleRemoveCast = (e, index) => {
+    e.preventDefault();
+    const updatedCasts = [...movieData.casts];
+    updatedCasts.splice(index, 1);
+    setMovieData((prevState) => ({
+      ...prevState,
+      casts: updatedCasts,
+    }));
+  };
+  const handleUpdateCast = (e) => {
+    e.preventDefault();
+    let updatedCasts = [...movieData.casts];
+    if (editModeIndex !== -1) {
+      // Editing an existing cast
+      updatedCasts[editModeIndex] = castInput;
+      setEditModeIndex(-1);
+    } else {
+      // Adding a new cast
+      updatedCasts.push(castInput);
+    }
+
+    setMovieData((prevState) => ({
+      ...prevState,
+      casts: updatedCasts,
+    }));
+
+    setCastInput({ castName: "", roleName: "", castUrl: "" });
+    setEditMode(false);
+  }
+  console.log(movieData.casts)
   const handleAddCast = () => {
-    setMovieData((prevState) => ({
-      ...prevState,
-      casts: [...prevState.casts, { castName: "", castUrl: "", roleName: "" }],
-    }));
-  };
+    setCastInput({ castName: "", roleName: "", castUrl: "" });
+    setEditMode(true);
+  }
 
-  const handleAddGenre = () => {
-    setMovieData((prevState) => ({
-      ...prevState,
-      genres: [...prevState.genres, { category: ""}],
-    }));
-  };
+
+
+
+
+
+
 
 
 
@@ -122,6 +163,10 @@ const MovieForm = (props) => {
       ...prevState,
       motionPictureRating: selectedRating,
     }));
+  };
+  const handleCollectionChange = (event) => {
+    const { value } = event.target;
+    setUnit(value);
   };
 
   const handleSubmit = (e) => {
@@ -136,31 +181,31 @@ const MovieForm = (props) => {
       genres: movieData.genres,
       genreId: movieData.genreId,
       runtime: movieData.runtime,
-      collection: movieData.collection,
+      collection: movieData.collection+" "+unit,
       language: movieData.language,
       posterUrl: movieData.posterUrl,
       releaseDate: movieData.releaseDate
     }
 
     console.log('newMovie => ' + JSON.stringify(newMovie));
-if(movieData.id==='_add'){
-    MovieServices.createMovie(newMovie).then(res => {
-      console.log(res.data)
-      navigate('/')
-    }, (error)=>{
-      alert("something went wrong try again ")
-      navigate('/')
-      console.log("error")
-    });
-   
-  }
-  else{
-    MovieServices.updateMovie(newMovie,id).then(res=>{
-      console.log(res.data);
-      navigate('/')
-     })
-     
-  }
+    if (movieData.id === '_add') {
+      MovieServices.createMovie(newMovie).then(res => {
+        console.log(res.data)
+        navigate('/')
+      }, (error) => {
+        alert("something went wrong try again ")
+        navigate('/')
+        console.log("error")
+      });
+
+    }
+    else {
+      MovieServices.updateMovie(newMovie, id).then(res => {
+        console.log(res.data);
+        navigate('/')
+      })
+
+    }
     setMovieData({
       title: "",
       director: "",
@@ -176,14 +221,14 @@ if(movieData.id==='_add'){
       posterUrl: "",
       releaseDate: "",
     });
-   
+
   };
 
   return (
-    <div className="bg-image">
+    <div className="flex-fill" style={{margin:"10px"}}>
       <div className="row">
         <div className="col-md-8 mx-auto">
-          <h3 className="py-4 text-warning text-center">Add Movie Form</h3>
+          <h3 className="py-4 text-warning text-center">{movieData.id === '_add' ? "Add Movie Form" : "Update Movie Form"}</h3>
           <form>
             <div className="form-group row">
               <div className="col-sm-6">
@@ -226,7 +271,7 @@ if(movieData.id==='_add'){
                   className="form-control"
                   type="url"
                   name="posterUrl"
-                  value={movieData.imageURL}
+                  value={movieData.posterUrl}
                   onChange={handleChange}
                 />
               </div>
@@ -246,90 +291,117 @@ if(movieData.id==='_add'){
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-sm-6 p-3">
-                <label className="movieLabel">Genre</label>
-                {movieData.genres.map((genre, index) => (
-                  <div key={index}>
-                    <label className="movieLabel">Category</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      value={genre.category}
-                      onChange={(e) =>
-                        genreChange(index, "category", e.target.value)
-                      }
-                    />
-                
-                  </div>
-                ))}
-                <br />
-                <button
-                  className="btn btn-dark"
-                  type="button"
-                  onClick={handleAddGenre}
-                >
-                  Add Genre
-                </button>
-              </div>
-              <div className="col-sm-6 p-3">
-                <label className="movieLabel">Cast</label>
-                {movieData.casts.map((castMember, index) => (
-                  <div key={index}>
-                    <label className="movieLabel">Star Name</label>
-                    <input
-                      className="form-control"
-                      type="text"
-                      value={castMember.castName}
-                      onChange={(e) =>
-                        handleCastChange(index, "castName", e.target.value)
-                      }
-                    />
-                    <div>
-                      <label className="movieLabel">Star Image URL</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        value={castMember.castUrl}
-                        onChange={(e) =>
-                          handleCastChange(index, "castUrl", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className="movieLabel">Star Role</label>
-                      <input
-                        className="form-control"
-                        type="text"
-                        value={castMember.roleName}
-                        onChange={(e) =>
-                          handleCastChange(index, "roleName", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                ))}
-                <br />
-                <button
-                  className="btn btn-dark"
-                  type="button"
-                  onClick={handleAddCast}
-                >
-                  Add Cast
-                </button>
-              </div>
-             
+
               <div className="col-sm-6">
+                <label className="movieLabel">Select Genre </label>
                 <Select
                   className="dropdown"
                   placeholder="Select Genre"
-                  value={data.filter(obj => selectedValue.includes(obj.value))} // set selected values
-                  options={data} // set list of the data
+                  value={selectedValue.map(genre => ({ value: genre.category, label: genre.category }))}
+                  options={data.map(genre => ({ value: genre.value, label: genre.value }))}
                   onChange={handleGenreChange} // assign onChange function
                   isMulti
                   isClearable
                 />
               </div>
             </div>
+            <div className="form-group row">
+              <div className="col-sm-12 p-3">
+                <label className="movieLabel">Cast</label>
+                
+                <div>
+                <div className="d-flex flex-wrap ">                            
+                    {movieData.casts.map((cast, index) => (
+                    <div className="card mb-3 mr-2"  style={{ marginRight: '8px' }}  key={index}>
+                      <div className="card-body">
+                        <img
+                          src={cast.castUrl}
+                          className="card-img-top"
+                          alt={cast.castName}
+                          style={{ height: "150px", width: "150px" }}
+                        />
+                        <h5 className="card-title">{cast.castName}</h5>
+                        <p className="card-text">Role: {cast.roleName}</p>
+                        {!editMode && (
+                          <div className="row">
+                            <div className="col">
+                            <button
+                              className="btn btn-primary"
+                              onClick={(e) => handleEditCast(e, index)}
+                            >
+                              Edit
+                            </button>
+                            </div>
+                            <div className="col">
+                            <button
+                              className="btn btn-danger"
+                              onClick={(e) => handleRemoveCast(e, index)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                          </div>
+                        )}
+
+                      </div>
+                    </div>
+                  ))}
+                  </div>
+
+                  {editMode && (
+                    <div>
+                      <div className="form-group">
+                        <label className="movieLabel">Star Name</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="castName"
+                          value={castInput.castName}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label className="movieLabel">Star Image URL</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="castUrl"
+                          value={castInput.castUrl}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label className="movieLabel">Star Role</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          name="roleName"
+                          value={castInput.roleName}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                      <br/>
+                      <button
+                        className="btn btn-primary"
+                        onClick={(e) => handleUpdateCast(e)}
+                      >
+                        Update
+                      </button>
+                    </div>
+                  )}
+                  {!editMode && (
+                    <button
+                      className="btn btn-dark"
+                      type="button"
+                      onClick={handleAddCast}
+                    >
+                      Add Cast
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
 
 
             <div className="form-group row">
@@ -385,8 +457,8 @@ if(movieData.id==='_add'){
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-sm-6">
-                <label className="movieLabel">Box Office Collection</label>
+              <div className="col-sm-3">
+                <label className="movieLabel">Box Office</label>
                 <input
                   className="form-control"
                   type="text"
@@ -394,6 +466,21 @@ if(movieData.id==='_add'){
                   value={movieData.collection}
                   onChange={handleChange}
                 />
+              </div>
+              <div className="col">
+                <label className="movieLabel">choose unit</label>
+                <select
+                  className="form-control"
+                  name="unit"
+                  value={unit}
+                  onChange={handleCollectionChange}
+                  placeholder="choose one"
+                >
+                  
+                  <option value="Millions">Millions</option>
+                  <option value="Billions">Billions</option>
+                 
+                </select>
               </div>
             </div>
 

@@ -6,10 +6,11 @@ import Login from './components/Cred/Login';
 import Signup from './components/Cred/signup';
 import MovieForm from './components/Form/MovieForm';
 import MovieDetailPage from './components/MovieDetail/MovieDetailPage';
-import SearchResult from './searchresult/SearchResult';
-import Navbar from './components/Header/navbar';
+
 import Footer from './components/Footer/footer';
-import ViewAll from './Viewall/ViewAll';
+
+import SearchResult from './components/searchresult/SearchResult';
+import ViewAll from './components/Viewall/ViewAll';
 
 function App() {
   return (

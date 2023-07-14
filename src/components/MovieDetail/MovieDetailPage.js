@@ -3,9 +3,12 @@ import './MovieDetail.css';
 import { FaPlus, FaMinus, FaStar } from 'react-icons/fa';
 import { GiCancel } from 'react-icons/gi';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import MovieServices from "../../Services/MovieServices";
-import CastServices from "../../Services/CastServices";
+
 import Review from "./Review";
+import MovieServices from "../Services/MovieServices";
+import GenreServices from "../Services/GenreServices";
+import CastServices from "../Services/CastServices";
+
 
 const MovieDetailPage = (props) => {
 
@@ -59,9 +62,9 @@ const { isRole , isLoggedIn } = location.state ;
             }
         )
     }
-    const removeGenre = (genreId, movieId) => {
+    const removeGenre = (genreId) => {
         alert("remove genre")
-        MovieServices.removeGenreFromMovie(genreId, movieId).then(
+        GenreServices.deleteGenre(genreId).then(
            (res) =>{
              const updatedGenres = moviedata.genres.filter((genre) => genre.genreId !== genreId);
     changeMovieData((prevData) => ({ ...prevData, genres: updatedGenres }));

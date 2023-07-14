@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import "./Trending.css";
 import { useRef } from "react";
 import { FaStar } from "react-icons/fa";
-import MovieServices from "../../Services/MovieServices";
+
 import { useNavigate } from "react-router-dom";
 import ViewMovieModal from "../moviemodal";
+import MovieServices from "../Services/MovieServices";
 
 const Trending = (props) => {
   const [rmovie, setRmovie] = useState([]);

@@ -3,7 +3,8 @@ import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import './Login.css';
-import AuthServices from "../../Services/AuthServices";
+import AuthServices from "../Services/AuthServices";
+
 
 const Login = () => {
   let [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -58,10 +59,12 @@ const Login = () => {
     AuthServices.login(loginData.username,loginData.password).then(
       ()=>{
         setIsError(false)
+        setIsValid(true)
         navigate("/")
       },
       (error)=>{
         setIsError(true)
+        setIsValid(false)
         console.log("error")
       }
     )

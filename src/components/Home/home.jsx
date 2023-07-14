@@ -4,7 +4,7 @@ import Genre from '../Genre/genre';
 import Recommended from '../Recommended/Recommended';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthServices from '../../Services/AuthServices';
+import AuthServices from "../Services/AuthServices";
 import Navbar from '../Header/navbar';
 
 

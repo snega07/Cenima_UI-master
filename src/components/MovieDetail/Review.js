@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReviewService from "../../Services/ReviewService";
+import ReviewService from "../Services/ReviewService";
 import './MovieDetail.css';
 import { FaStar } from 'react-icons/fa';
 const Review = ({ movieId, isRole, isLoggedIn }) => {
@@ -12,8 +12,6 @@ const Review = ({ movieId, isRole, isLoggedIn }) => {
     const [hover, setHover] = useState(null);
     const [reviewslist, setReviewslist] = useState([]);
     var i = 0;
-
-
     const fetchReviews = async () => {
         ReviewService.getReview(movId)
             .then((res) => {
@@ -80,6 +78,8 @@ const Review = ({ movieId, isRole, isLoggedIn }) => {
                 border: "2px solid black",
                 borderRadius: "2rem"
             }}>
+                <div className="card">
+                    <div className="card-body">
                 <h6><strong>Rating</strong></h6>
                 <div className='m-2'>
                     {list.map((ele, i) => {
@@ -109,6 +109,7 @@ const Review = ({ movieId, isRole, isLoggedIn }) => {
                     })}
 
                 </div>
+                
 
                 <div className="mb-3">
                     <label htmlFor="review" className="form-label"><strong>Review</strong></label>
@@ -126,11 +127,13 @@ const Review = ({ movieId, isRole, isLoggedIn }) => {
                 </div>
 
                 <button className='btn btn-success ' type='submit' onClick={handlesubmit} disabled={isRole !== 'ROLE_USER'}>Save </button>
-                <button className='btn btn-danger mx-4' onClick={handleCancel} disabled={isRole !== 'ROLE_USER'}>Cancle</button>
+                <button className='btn btn-danger mr-3' onClick={handleCancel} disabled={isRole !== 'ROLE_USER'}>Cancle</button>
 
 
 
             </div>
+            </div>
+                </div>
 
             {
                 reviewRes.length > 0 ? reviewRes.map((rev, index) => (

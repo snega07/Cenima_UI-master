@@ -6,6 +6,10 @@ class GenreServices {
     return axios.get(Genre_API_BASE_URL);
     }
 
+    deleteGenre(genreId){
+        return axios.delete(Genre_API_BASE_URL+'/'+genreId)
+    }
+
 }
 
 export default new GenreServices();

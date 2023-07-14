@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Recommended.css";
 import { useRef } from "react";
 import { FaStar } from "react-icons/fa";
-import MovieServices from "../../Services/MovieServices";
+import MovieServices from "../Services/MovieServices";
 import { useNavigate } from "react-router-dom";
 import ViewMovieModal from "../moviemodal";
 
@@ -182,12 +182,14 @@ const Recommended = (props) => {
                     >
                       Watch Option
                     </button>
+               <div  style={{ zIndex: "1040" }}>
                 { selectedMovie &&   <ViewMovieModal showModal={showModal} handleCloseModal={handleCloseModal}  movie={{
             image: selectedMovie.posterUrl,
             title: selectedMovie.title,
             description: selectedMovie.movieDesc,
             rating: selectedMovie.rating,
           }}/>}
+          </div>
                   </div>
                 </div>
               </div>
